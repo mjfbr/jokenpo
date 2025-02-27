@@ -1,0 +1,75 @@
+openapi: 3.0.0
+info:
+  title: Jokenpô API
+  description: API para jogar Jokenpô (Pedra, Papel e Tesoura).
+  version: 1.0.0
+
+servers:
+  - url: http://localhost:8080
+    description: Servidor Local
+
+security:
+  - BearerAuth: []
+
+paths:
+  /jogar:
+    post:
+      summary: Joga uma partida de Jokenpô
+      description: O jogador escolhe pedra, papel ou tesoura e joga contra o computador.
+      security:
+        - BearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                tipo_jogada:
+                  type: string
+                  enum: [pedra, papel, tesoura]
+                  example: pedra
+      responses:
+        "200":
+          description: Retorna o resultado do jogo
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  escolha_usuario:
+                    type: string
+                    example: pedra
+                  escolha_computador:
+                    type: string
+                    example: tesoura
+                  resultado:
+                    type: string
+                    example: Você venceu!
+        "400":
+          description: Entrada inválida
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: Escolha inválida
+        "401":
+          description: Token de autenticação inválido
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: Token inválido
+
+components:
+  securitySchemes:
+    BearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
